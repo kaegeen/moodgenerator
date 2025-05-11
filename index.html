@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mood Board Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .draggable {
+      position: absolute;
+      cursor: move;
+      transition: box-shadow 0.2s;
+    }
+    .draggable:active {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden">
+  <div class="p-4 flex space-x-4 fixed top-0 left-0 w-full bg-white shadow z-10">
+    <button onclick="addNote()" class="bg-yellow-300 px-3 py-1 rounded">Add Note</button>
+    <button onclick="addImage()" class="bg-blue-300 px-3 py-1 rounded">Add Image</button>
+    <button onclick="clearBoard()" class="bg-red-400 px-3 py-1 rounded text-white">Clear</button>
+  </div>
+
+  <div id="board" class="relative w-full h-full pt-16"></div>
+
+  <script>
+    const board = document.getElementById('board');
+
+    function makeDraggable(el) {
+      let offsetX, offsetY, isDragging = false;
+
+      el.addEventListener('mousedown', e => {
+        isDragging = true;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+        el.style.zIndex = 1000;
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        el.style.left = `${e.pageX - offsetX}px`;
+        el.style.top = `${e.pageY - offsetY}px`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        el.style.zIndex = '';
+      });
+    }
+
+    function addNote() {
+      const note = document.createElement('div');
+      note.className = 'draggable bg-yellow-100 border p-3 rounded w-48';
+      note.style.top = '100px';
+      note.style.left = '100px';
+      note.innerHTML = `<textarea class="w-full h-24 resize-none bg-transparent outline-none" placeholder="Write here..."></textarea>`;
+      makeDraggable(note);
+      board.appendChild(note);
+    }
+
+    function addImage() {
+      const url = prompt('Enter image URL:');
+      if (!url) return;
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'draggable w-40 rounded shadow';
+      img.style.top = '150px';
+      img.style.left = '150px';
+      makeDraggable(img);
+      board.appendChild(img);
+    }
+
+    function clearBoard() {
+      board.innerHTML = '';
+    }
+  </script>
+</body>
+</html>
